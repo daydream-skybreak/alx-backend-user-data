@@ -1,11 +1,10 @@
+#!/usr/bin/env python3
 """DB module
 """
 from sqlalchemy import create_engine, tuple_
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import NoResultFound, InvalidRequestError
-from typing import TypeVar
 from user import Base, User
 
 
@@ -31,7 +30,7 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """methods that saves user from the database"""
+        """methods that saves user on the database"""
         try:
             user = User(email=email, hashed_password=hashed_password)
             self._session.add(user)
