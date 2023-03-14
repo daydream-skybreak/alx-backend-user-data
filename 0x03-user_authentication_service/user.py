@@ -10,7 +10,7 @@ Base = declarative_base()
 
 class User(Base):
     """user model of a sql database table named user"""
-    __tablename__ = 'user'
+    __tablename__ = 'users'
     id = Column(INTEGER, primary_key=True)
     email = Column(String(250), nullable=False)
     hashed_password = Column(String(250), nullable=False)
