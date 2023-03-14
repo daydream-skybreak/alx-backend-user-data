@@ -45,10 +45,10 @@ class DB:
     def find_user_by(self, **kwarg):
         """returns the first row from the users table"""
         fields, values = [], []
-        for key, val in kwarg.items():
+        for key, value in kwarg.items():
             if hasattr(User, key):
                 fields.append(getattr(User, key))
-                values.append(val)
+                values.append(value)
             else:
                 raise InvalidRequestError()
         result = self._session.query(User).filter(
