@@ -4,7 +4,9 @@
 from sqlalchemy import create_engine, tuple_
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import NoResultFound, InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
+
 from user import Base, User
 
 
@@ -15,7 +17,7 @@ class DB:
     def __init__(self) -> None:
         """Initialize a new DB instance
         """
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -48,10 +50,10 @@ class DB:
                 fields.append(getattr(User, key))
                 values.append(val)
             else:
-                raise InvalidRequestError
-        result = self._session.query().filter(
+                raise InvalidRequestError()
+        result = self._session.query(User).filter(
             tuple_(*fields).in_([tuple(values)])
         ).first()
         if result is None:
-            raise NoResultFound
+            raise NoResultFound()
         return result
