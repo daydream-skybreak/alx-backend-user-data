@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Basic Flask App"""
+from urllib import response
 from sqlalchemy.orm.exc import NoResultFound
 from flask import Flask, jsonify, request, abort, redirect
 from auth import Auth
@@ -56,6 +57,7 @@ def logout():
 
 @app.route('/profile', methods=['GET'], strict_slashes=False)
 def profile():
+    """gets the email of a user based on session_id"""
     session_id = request.cookies.get('session_id')
     user = None
     try:
@@ -75,6 +77,23 @@ def reset_password():
     except ValueError:
         abort(403)
     return jsonify({"email": email, "reset_token": reset_token})
+
+
+@app.route('/reset_password', methods=['PUT'], strict_slashes=False)
+def update_password():
+    """updates password of a user"""
+    email, pswd = request.form.get('email'), request.form.get('new_password')
+    reset_token = request.form.get('reset_token')
+
+    try:
+        AUTH.update_password(reset_token, pswd)
+        updated = True
+    except ValueError:
+        updated = False
+
+    if updated:
+        return jsonify({"email": email, "message": "Password updated"})
+    abort(403)
 
 
 if __name__ == '__main__':
