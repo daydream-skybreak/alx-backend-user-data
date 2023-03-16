@@ -2,7 +2,7 @@
 """Basic Flask App"""
 from urllib import response
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, redirect, url_for
 from auth import Auth
 
 app = Flask(__name__)
@@ -33,7 +33,7 @@ def register():
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login():
-    """implements a login form"""
+    """implements a login method"""
     email, pswd = request.form.get('email'), request.form.get('password')
     if AUTH.valid_login(email, pswd):
         session = AUTH.create_session(email)
@@ -42,6 +42,17 @@ def login():
         return resp
     else:
         abort(401)
+
+
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
+def logout():
+    """implements logout method"""
+    session_id = request.cookies.get('session_id')
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None:
+        abort(403)
+    AUTH.destroy_session(user.id)
+    return redirect('/')
 
 
 if __name__ == '__main__':
