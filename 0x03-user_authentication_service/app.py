@@ -56,10 +56,12 @@ def logout():
 @app.route('/profile', methods=['GET'], strict_slashes=False)
 def profile():
     session_id = request.cookies.get('session_id')
+    user = None
     try:
         user = AUTH.get_user_from_session_id(session_id)
     except NoResultFound:
         abort(403)
+    return jsonify({"email": user.email})
 
 
 if __name__ == '__main__':
