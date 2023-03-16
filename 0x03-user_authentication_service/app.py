@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Basic Flask App"""
-from urllib import response
-
-from flask import Flask, jsonify, request, abort, redirect, url_for
+from sqlalchemy.orm.exc import NoResultFound
+from flask import Flask, jsonify, request, abort, redirect
 from auth import Auth
 
 app = Flask(__name__)
@@ -50,9 +49,17 @@ def logout():
     session_id = request.cookies.get('session_id')
     user = AUTH.get_user_from_session_id(session_id)
     if user is None:
-        abort(403)
+        return 403
     AUTH.destroy_session(user.id)
     return redirect('/')
+
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile():
+    session_id = request.cookies.get('session_id')
+    try:
+        user = AUTH.get_user_from_session_id(session_id)
+    except NoResultFound:
+        return 403
 
 
 if __name__ == '__main__':
